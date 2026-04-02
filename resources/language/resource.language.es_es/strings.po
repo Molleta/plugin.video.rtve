@@ -1,0 +1,108 @@
+# Kodi language file
+# Copyright (C) 2024
+# This file is distributed under the same license as the package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: plugin.video.rtve 2.0.0\n"
+"POT-Creation-Date: 2024-01-01 00:00+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: Molleta\n"
+"Language-Team: Spanish\n"
+"Language: es\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+# Mensajes principales
+msgid "En directo"
+msgstr "En directo"
+
+msgid "A la carta"
+msgstr "A la carta"
+
+msgid "Programas"
+msgstr "Programas"
+
+msgid "Ver canales en vivo"
+msgstr "Ver canales en vivo"
+
+msgid "Ver contenido bajo demanda"
+msgstr "Ver contenido bajo demanda"
+
+msgid "Ver lista de programas"
+msgstr "Ver lista de programas"
+
+# Mensajes de error
+msgid "No se pudieron cargar los canales en directo"
+msgstr "No se pudieron cargar los canales en directo"
+
+msgid "No se pudo cargar el contenido bajo demanda"
+msgstr "No se pudo cargar el contenido bajo demanda"
+
+msgid "No se pudieron cargar los programas"
+msgstr "No se pudieron cargar los programas"
+
+msgid "URL de vídeo inválida"
+msgstr "URL de vídeo inválida"
+
+msgid "Error al reproducir el vídeo"
+msgstr "Error al reproducir el vídeo"
+
+msgid "Error en el addon"
+msgstr "Error en el addon"
+
+# Configuración - Etiquetas de categoría
+msgid "General"
+msgstr "General"
+
+msgid "Avanzado"
+msgstr "Avanzado"
+
+# Configuración - Grupos
+msgid "Conexión"
+msgstr "Conexión"
+
+msgid "Red"
+msgstr "Red"
+
+# Configuración - Opciones
+msgid "Timeout de conexión (segundos)"
+msgstr "Timeout de conexión (segundos)"
+
+msgid "Tiempo máximo para conectar con RTVE"
+msgstr "Tiempo máximo para conectar con RTVE"
+
+msgid "Habilitar caché"
+msgstr "Habilitar caché"
+
+msgid "Cachear listados para mayor velocidad"
+msgstr "Cachear listados para mayor velocidad"
+
+msgid "Máximo de reintentos"
+msgstr "Máximo de reintentos"
+
+msgid "Número de intentos antes de fallar"
+msgstr "Número de intentos antes de fallar"
+
+msgid "User-Agent personalizado"
+msgstr "User-Agent personalizado"
+
+msgid "Dejar en blanco para usar el predeterminado"
+msgstr "Dejar en blanco para usar el predeterminado"
+
+# Notificaciones
+msgid "RTVE"
+msgstr "RTVE"
+
+msgid "Cargando..."
+msgstr "Cargando..."
+
+msgid "Conectando con RTVE"
+msgstr "Conectando con RTVE"
+
+msgid "Reproduciendo..."
+msgstr "Reproduciendo..."
+
+msgid "Completado"
+msgstr "Completado"
