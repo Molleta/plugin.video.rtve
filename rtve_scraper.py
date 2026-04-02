@@ -14,8 +14,10 @@ from urllib3.util.retry import Retry
 
 logger = logging.getLogger(__name__)
 
+
 class RTVEScraperCache:
     """Simple cache with TTL support"""
+    
     def __init__(self, ttl_seconds=1800):
         self.cache = {}
         self.ttl = ttl_seconds
@@ -40,6 +42,7 @@ class RTVEScraperCache:
         """Clear all cache"""
         self.cache.clear()
         logger.info("Cache cleared")
+
 
 class RTVEScraper:
     """RTVE Content Scraper"""
@@ -297,7 +300,7 @@ class RTVEScraper:
         try:
             result = urlparse(url)
             return all([result.scheme, result.netloc])
-        except:
+        except Exception:
             return False
     
     def clear_cache(self):
@@ -310,4 +313,3 @@ class RTVEScraper:
             'cached_items': len(self.cache.cache),
             'cache_ttl': self.cache.ttl
         }
-      .
