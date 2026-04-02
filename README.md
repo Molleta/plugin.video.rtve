@@ -1,27 +1,49 @@
-# RTVE Kodi Addon Documentation
+# RTVE Addon para Kodi
 
-## Introduction
-The RTVE Kodi Addon allows users to access content from RTVE, Spain's national public broadcaster. This documentation provides an overview of installation, features, and usage.
+Addon de vídeo para Kodi que permite ver contenido de RTVE en directo y bajo demanda.
 
-## Installation
-1. Open Kodi.
-2. Go to Add-ons > Install from repository.
-3. Select the RTVE repository.
-4. Choose the RTVE Addon and click Install.
+## Características
 
-## Features
-- Access to live TV channels.
-- On-demand videos from RTVE's catalog.
-- User-friendly interface for easy navigation.
+- ✅ Canales en directo
+- ✅ Contenido bajo demanda
+- ✅ Lista de programas
+- ✅ Caché inteligente
+- ✅ Reintentos automáticos
+- ✅ Configuración personalizable
 
-## Usage
-- Navigate through the categories to find your desired content.
-- Use the search function to quickly locate specific shows or channels.
+## Instalación
 
-## Troubleshooting
-If you encounter issues:
-- Ensure you have a stable internet connection.
-- Check for updates to the addon in the add-ons menu.
+1. Descarga el addon
+2. Colócalo en tu carpeta de addons de Kodi
+3. Abre Kodi
+4. Ve a Addons > Mis addons > Vídeo > RTVE
+5. Haz clic en Instalar
 
-## Support
-For further assistance, please visit our support page or contact us via email.
+## Configuración
+
+El addon se puede configurar desde:
+Addons > Mis addons > Vídeo > RTVE > Configurar
+
+Opciones disponibles:
+- Timeout de conexión
+- Habilitar/deshabilitar caché
+- Máximo de reintentos
+- User-Agent personalizado
+
+## Requisitos
+
+- Kodi 19+
+- Python 3.6+
+- requests (incluido en Kodi)
+
+## Disclaimer
+
+Este addon no está respaldado por RTVE. Úsalo bajo tu propio riesgo.
+
+## Licencia
+
+GPL-2.0
+
+## Autor
+
+Molleta
