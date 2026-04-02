@@ -1,72 +1,195 @@
+"""
+RTVE Kodi Addon - Main Plugin
+Provides interface for RTVE live channels and on-demand content
+"""
+
 import sys
 import xbmcplugin
 import xbmcgui
 import xbmcaddon
+import logging
 from urllib.parse import parse_qs, urlencode
+
+from rtve_scraper import RTVEScraper
+
+# Setup logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # Get addon instance
 addon = xbmcaddon.Addon()
 handle = int(sys.argv[1])
 base_url = sys.argv[0]
 
-def get_categories():
-    """Return list of main categories"""
-    return [
-        {
-            'name': 'En directo',
-            'icon': 'DefaultFolder.png',
-            'url': base_url + '?' + urlencode({'action': 'list_live'})
-        },
-        {
-            'name': 'A la carta',
-            'icon': 'DefaultFolder.png',
-            'url': base_url + '?' + urlencode({'action': 'list_vod'})
-        },
-        {
-            'name': 'Programas',
-            'icon': 'DefaultFolder.png',
-            'url': base_url + '?' + urlencode({'action': 'list_programs'})
-        }
-    ]
+# Initialize scraper with addon settings
+scraper = RTVEScraper(
+    timeout=int(addon.getSetting('connection_timeout')) or 10,
+    max_retries=int(addon.getSetting('max_retries')) or 3,
+    enable_cache=addon.getSetting('enable_cache') == 'true'
+)
+
+# Set custom user agent if configured
+custom_ua = addon.getSetting('user_agent')
+if custom_ua:
+    scraper.set_custom_user_agent(custom_ua)
+
+def build_url(query):
+    """Build URL with query parameters"""
+    return base_url + '?' + urlencode(query)
+
+def add_directory_item(label, url, is_folder=True, icon='', description=''):
+    """Add directory item to list"""
+    li = xbmcgui.ListItem(label=label)
+    if icon:
+        li.setArt({'icon': icon, 'thumb': icon})
+    if description:
+        li.setInfo('video', {'plot': description})
+    xbmcplugin.addDirectoryItem(handle, url, li, isFolder=is_folder)
 
 def list_categories():
     """List main categories"""
-    categories = get_categories()
+    logger.info("Listing main categories")
+    
+    categories = [
+        {
+            'name': 'En directo',
+            'action': 'list_live',
+            'description': 'Ver canales en vivo'
+        },
+        {
+            'name': 'A la carta',
+            'action': 'list_vod',
+            'description': 'Ver contenido bajo demanda'
+        },
+        {
+            'name': 'Programas',
+            'action': 'list_programs',
+            'description': 'Ver lista de programas'
+        }
+    ]
+    
     for cat in categories:
-        li = xbmcgui.ListItem(label=cat['name'])
-        li.setArt({'icon': cat['icon']})
-        xbmcplugin.addDirectoryItem(handle, cat['url'], li, isFolder=True)
+        url = build_url({'action': cat['action']})
+        add_directory_item(
+            cat['name'],
+            url,
+            is_folder=True,
+            description=cat['description']
+        )
+    
     xbmcplugin.endOfDirectory(handle)
 
 def list_live():
     """List live channels"""
-    channels = [
-        {'title': 'La 1', 'url': 'http://example.com/la1'},
-        {'title': 'La 2', 'url': 'http://example.com/la2'},
-        {'title': '3/24', 'url': 'http://example.com/3-24'},
-    ]
+    logger.info("Listing live channels")
+    
+    channels = scraper.get_live_channels()
+    
+    if not channels:
+        xbmcgui.Dialog().notification(
+            'RTVE',
+            'No se pudieron cargar los canales en directo',
+            xbmcgui.NOTIFICATION_ERROR
+        )
+    
     for channel in channels:
-        li = xbmcgui.ListItem(label=channel['title'])
-        url = base_url + '?' + urlencode({'action': 'play', 'url': channel['url']})
-        xbmcplugin.addDirectoryItem(handle, url, li, isFolder=False)
+        url = build_url({
+            'action': 'play',
+            'url': channel['url'],
+            'title': channel['title']
+        })
+        add_directory_item(
+            channel['title'],
+            url,
+            is_folder=False,
+            icon=channel.get('icon', ''),
+            description=channel.get('description', '')
+        )
+    
     xbmcplugin.endOfDirectory(handle)
 
 def list_vod():
     """List on-demand content"""
-    programs = [
-        {'title': 'Programa 1', 'url': 'http://example.com/prog1'},
-        {'title': 'Programa 2', 'url': 'http://example.com/prog2'},
-    ]
+    logger.info("Listing on-demand content")
+    
+    programs = scraper.get_on_demand(page=1)
+    
+    if not programs:
+        xbmcgui.Dialog().notification(
+            'RTVE',
+            'No se pudo cargar el contenido bajo demanda',
+            xbmcgui.NOTIFICATION_ERROR
+        )
+    
     for program in programs:
-        li = xbmcgui.ListItem(label=program['title'])
-        url = base_url + '?' + urlencode({'action': 'play', 'url': program['url']})
-        xbmcplugin.addDirectoryItem(handle, url, li, isFolder=False)
+        url = build_url({
+            'action': 'play',
+            'url': program['url'],
+            'title': program['title']
+        })
+        add_directory_item(
+            program['title'],
+            url,
+            is_folder=False,
+            icon=program.get('icon', ''),
+            description=program.get('description', '')
+        )
+    
     xbmcplugin.endOfDirectory(handle)
 
-def play_video(url):
+def list_programs():
+    """List programs"""
+    logger.info("Listing programs")
+    
+    programs = scraper.get_programs()
+    
+    if not programs:
+        xbmcgui.Dialog().notification(
+            'RTVE',
+            'No se pudieron cargar los programas',
+            xbmcgui.NOTIFICATION_ERROR
+        )
+    
+    for program in programs:
+        url = build_url({
+            'action': 'play',
+            'url': program['url'],
+            'title': program['title']
+        })
+        add_directory_item(
+            program['title'],
+            url,
+            is_folder=False,
+            icon=program.get('icon', ''),
+            description=program.get('description', '')
+        )
+    
+    xbmcplugin.endOfDirectory(handle)
+
+def play_video(url, title=''):
     """Play video"""
-    li = xbmcgui.ListItem(path=url)
-    xbmcplugin.setResolvedUrl(handle, True, li)
+    logger.info(f"Playing video: {title} - {url}")
+    
+    if not url:
+        xbmcgui.Dialog().notification(
+            'RTVE',
+            'URL de vídeo inválida',
+            xbmcgui.NOTIFICATION_ERROR
+        )
+        return
+    
+    try:
+        li = xbmcgui.ListItem(path=url)
+        li.setProperty('inputstreamaddon', 'inputstream.adaptive')
+        li.setInfo('video', {'title': title})
+        xbmcplugin.setResolvedUrl(handle, True, li)
+    except Exception as e:
+        logger.error(f"Error playing video: {e}")
+        xbmcgui.Dialog().notification(
+            'RTVE',
+            'Error al reproducir el vídeo',
+            xbmcgui.NOTIFICATION_ERROR
+        )
 
 def router(params):
     """Route actions"""
@@ -74,16 +197,28 @@ def router(params):
         list_categories()
     else:
         action = params.get('action', [''])[0]
+        
         if action == 'list_live':
             list_live()
         elif action == 'list_vod':
             list_vod()
+        elif action == 'list_programs':
+            list_programs()
         elif action == 'play':
             url = params.get('url', [''])[0]
-            play_video(url)
+            title = params.get('title', [''])[0]
+            play_video(url, title)
         else:
             list_categories()
 
 if __name__ == '__main__':
-    params = parse_qs(sys.argv[2].lstrip('?'))
-    router(params)
+    try:
+        params = parse_qs(sys.argv[2].lstrip('?'))
+        router(params)
+    except Exception as e:
+        logger.error(f"Addon error: {e}", exc_info=True)
+        xbmcgui.Dialog().notification(
+            'RTVE',
+            'Error en el addon',
+            xbmcgui.NOTIFICATION_ERROR
+        )
