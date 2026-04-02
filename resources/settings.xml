@@ -1,0 +1,4 @@
+<settings>
+    <setting id="some_setting_id" value="some_value" />
+    <!-- Add more settings here -->
+</settings>
