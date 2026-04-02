@@ -12,33 +12,61 @@ from urllib.parse import parse_qs, urlencode
 
 from rtve_scraper import RTVEScraper
 
-# Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-# Get addon instance
 addon = xbmcaddon.Addon()
 handle = int(sys.argv[1])
 base_url = sys.argv[0]
 
-# Initialize scraper with addon settings
+# Safe settings parsing
+def get_int_setting(setting_name, default_value):
+    try:
+        value = addon.getSetting(setting_name)
+        if value and value.strip():
+            return int(value)
+        return default_value
+    except (ValueError, TypeError):
+        return default_value
+
+def get_bool_setting(setting_name, default_value=False):
+    try:
+        value = addon.getSetting(setting_name)
+        return value == 'true'
+    except:
+        return default_value
+
+def get_string_setting(setting_name, default_value=''):
+    try:
+        value = addon.getSetting(setting_name)
+        if value:
+            return value
+        return default_value
+    except:
+        return default_value
+
+# Get settings with safe defaults
+timeout = get_int_setting('connection_timeout', 10)
+max_retries = get_int_setting('max_retries', 3)
+enable_cache = get_bool_setting('enable_cache', True)
+custom_ua = get_string_setting('user_agent', '')
+
+# Initialize scraper
 scraper = RTVEScraper(
-    timeout=int(addon.getSetting('connection_timeout')) or 10,
-    max_retries=int(addon.getSetting('max_retries')) or 3,
-    enable_cache=addon.getSetting('enable_cache') == 'true'
+    timeout=timeout,
+    max_retries=max_retries,
+    enable_cache=enable_cache
 )
 
-# Set custom user agent if configured
-custom_ua = addon.getSetting('user_agent')
 if custom_ua:
     scraper.set_custom_user_agent(custom_ua)
 
+
 def build_url(query):
-    """Build URL with query parameters"""
     return base_url + '?' + urlencode(query)
 
+
 def add_directory_item(label, url, is_folder=True, icon='', description=''):
-    """Add directory item to list"""
     li = xbmcgui.ListItem(label=label)
     if icon:
         li.setArt({'icon': icon, 'thumb': icon})
@@ -46,8 +74,8 @@ def add_directory_item(label, url, is_folder=True, icon='', description=''):
         li.setInfo('video', {'plot': description})
     xbmcplugin.addDirectoryItem(handle, url, li, isFolder=is_folder)
 
+
 def list_categories():
-    """List main categories"""
     logger.info("Listing main categories")
     
     categories = [
@@ -79,8 +107,8 @@ def list_categories():
     
     xbmcplugin.endOfDirectory(handle)
 
+
 def list_live():
-    """List live channels"""
     logger.info("Listing live channels")
     
     channels = scraper.get_live_channels()
@@ -108,8 +136,8 @@ def list_live():
     
     xbmcplugin.endOfDirectory(handle)
 
+
 def list_vod():
-    """List on-demand content"""
     logger.info("Listing on-demand content")
     
     programs = scraper.get_on_demand(page=1)
@@ -137,8 +165,8 @@ def list_vod():
     
     xbmcplugin.endOfDirectory(handle)
 
+
 def list_programs():
-    """List programs"""
     logger.info("Listing programs")
     
     programs = scraper.get_programs()
@@ -166,33 +194,32 @@ def list_programs():
     
     xbmcplugin.endOfDirectory(handle)
 
+
 def play_video(url, title=''):
-    """Play video"""
-    logger.info(f"Playing video: {title} - {url}")
+    logger.info("Playing video: " + title)
     
     if not url:
         xbmcgui.Dialog().notification(
             'RTVE',
-            'URL de vídeo inválida',
+            'URL de video invalida',
             xbmcgui.NOTIFICATION_ERROR
         )
         return
     
     try:
         li = xbmcgui.ListItem(path=url)
-        li.setProperty('inputstreamaddon', 'inputstream.adaptive')
         li.setInfo('video', {'title': title})
         xbmcplugin.setResolvedUrl(handle, True, li)
     except Exception as e:
-        logger.error(f"Error playing video: {e}")
+        logger.error("Error playing video: " + str(e))
         xbmcgui.Dialog().notification(
             'RTVE',
-            'Error al reproducir el vídeo',
+            'Error al reproducir el video',
             xbmcgui.NOTIFICATION_ERROR
         )
 
+
 def router(params):
-    """Route actions"""
     if not params:
         list_categories()
     else:
@@ -211,12 +238,13 @@ def router(params):
         else:
             list_categories()
 
+
 if __name__ == '__main__':
     try:
         params = parse_qs(sys.argv[2].lstrip('?'))
         router(params)
     except Exception as e:
-        logger.error(f"Addon error: {e}", exc_info=True)
+        logger.error("Addon error: " + str(e))
         xbmcgui.Dialog().notification(
             'RTVE',
             'Error en el addon',
