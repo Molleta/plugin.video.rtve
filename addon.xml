@@ -1,16 +1,31 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<addon id="plugin.video.rtve" name="RTVE" version="1.0.0" provider-name="Molleta">
+<addon id="plugin.video.rtve" 
+       name="RTVE" 
+       version="2.0.0" 
+       provider-name="Molleta">
+    
+    <requires>
+        <import addon="xbmc.python" version="3.0.0"/>
+    </requires>
+    
     <extension point="xbmc.python.pluginsource" library="main.py">
         <provides>video</provides>
     </extension>
+    
     <extension point="xbmc.addon.metadata">
-        <summary>Watch RTVE content</summary>
-        <description>Video addon to watch content from RTVE platform. Watch live channels and on-demand programs.</description>
-        <disclaimer>This addon is not endorsed by RTVE. Use at your own risk.</disclaimer>
+        <summary lang="es">Ver contenido de RTVE en vivo y bajo demanda</summary>
+        <description lang="es">Addon de vídeo para ver contenido de la plataforma RTVE. Accede a canales en directo, programas bajo demanda y últimos vídeos.</description>
+        <description lang="en">Video addon to watch content from RTVE platform. Access live channels, on-demand programs and latest videos.</description>
+        <disclaimer lang="es">Este addon no está respaldado por RTVE. Úsalo bajo tu propio riesgo.</disclaimer>
+        <disclaimer lang="en">This addon is not endorsed by RTVE. Use at your own risk.</disclaimer>
+        <author>Molleta</author>
         <language>es</language>
         <platform>all</platform>
         <license>GPL-2.0</license>
         <website>https://www.rtve.es</website>
         <source>https://github.com/molleta/plugin.video.rtve</source>
+        <category>video</category>
+        <icon>icon.png</icon>
+        <fanart>fanart.jpg</fanart>
     </extension>
 </addon>
