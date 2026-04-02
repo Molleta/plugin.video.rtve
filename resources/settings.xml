@@ -1,4 +1,38 @@
-<settings>
-    <setting id="some_setting_id" value="some_value" />
-    <!-- Add more settings here -->
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<settings version="2">
+    <category label="General">
+        <group label="Conexión">
+            <setting id="connection_timeout" 
+                     type="integer" 
+                     label="Timeout de conexión (segundos)" 
+                     default="10" 
+                     min="5"
+                     max="60"
+                     help="Tiempo máximo para conectar con RTVE"/>
+            
+            <setting id="enable_cache" 
+                     type="boolean" 
+                     label="Habilitar caché" 
+                     default="true" 
+                     help="Cachear listados para mayor velocidad"/>
+            
+            <setting id="max_retries" 
+                     type="integer" 
+                     label="Máximo de reintentos" 
+                     default="3" 
+                     min="1"
+                     max="5"
+                     help="Número de intentos antes de fallar"/>
+        </group>
+    </category>
+    
+    <category label="Avanzado">
+        <group label="Red">
+            <setting id="user_agent" 
+                     type="text" 
+                     label="User-Agent personalizado" 
+                     default="" 
+                     help="Dejar en blanco para usar el predeterminado"/>
+        </group>
+    </category>
 </settings>
