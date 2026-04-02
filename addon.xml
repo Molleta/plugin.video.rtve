@@ -1,0 +1,7 @@
+<addon>
+    <id>plugin.video.rtve</id>
+    <version>1.0.0</version>
+    <name>RTVE Plugin</name>
+    <description>Plugin for accessing RTVE content</description>
+    <provider name="Molleta" />
+</addon>
